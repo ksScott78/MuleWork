@@ -11,6 +11,8 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
         <http:listener config-ref="HTTP_Listener_Configuration" path="/" doc:name="HTTP"/>
         <set-payload value="#['Hello World'.toUpperCase()]" doc:name="Set Payload"/>
         <set-property propertyName="qpvalue" value="#[message.inboundProperties.'http.query.params'.name]" doc:name="Property"/>
-        <logger message="#[message.outboundProperties.qpValue]" level="INFO" doc:name="Logger"/>
+        <set-variable variableName="qptype" value="#[message.inboundProperties.'http.query.params'.type]" doc:name="Variable"/>
+        <set-session-variable variableName="colour" value="red" doc:name="Session Variable"/>
+        <logger message="#['Name:' + message.outboundProperties.qpValue + ' ' + 'Type:' + flowVars.qptype + ' ' + 'Colour:' + sessionVars.colour]" level="INFO" doc:name="Logger"/>
     </flow>
 </mule>
