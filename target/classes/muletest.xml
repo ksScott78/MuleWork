@@ -9,12 +9,21 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
     <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="8081" doc:name="HTTP Listener Configuration"/>
     <http:request-config name="United_REST_Request_Configuration" host="mu.mulesoft-training.com" port="80" basePath="/essentials/united/flights" doc:name="HTTP Request Configuration"/>
+    <http:request-config name="Bank_REST_Request_Configuration" host="mu.mulesoft-training.com" port="80" basePath="/build/banking/rest" doc:name="HTTP Request Configuration"/>
     <flow name="getUnitedFlightsFlow">
         <http:listener config-ref="HTTP_Listener_Configuration" path="/united" allowedMethods="GET" doc:name="HTTP"/>
         <set-variable variableName="destination" value="#[(message.inboundProperties.'http.query.params'.code == empty) ? 'SFO' : message.inboundProperties.'http.query.params'.code]" doc:name="Set Destination"/>
         <http:request config-ref="United_REST_Request_Configuration" path="/{destination}" method="GET" doc:name="United Rest Request">
             <http:request-builder>
                 <http:uri-param paramName="destination" value="#[flowVars.destination]"/>
+            </http:request-builder>
+        </http:request>
+    </flow>
+    <flow name="getBankAccountsFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/bank/{id}" allowedMethods="GET" doc:name="HTTP"/>
+        <http:request config-ref="Bank_REST_Request_Configuration" path="/customers/{customer_id}/accounts" method="GET" doc:name="Bank REST Request">
+            <http:request-builder>
+                <http:uri-param paramName="customer_id" value="#[message.inboundProperties.'http.uri.params'.id]"/>
             </http:request-builder>
         </http:request>
     </flow>
